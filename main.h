@@ -14,5 +14,5 @@ int case_p(unsigned long int ptr);
 int spchr(char *s);
 int flags(const char *format, int *i, va_list *list);
 int flags2(const char *, int *, va_list *, int, int, int, int);
-
+int get_function(char con_spec, va_list args);
 #endif 
