@@ -9,35 +9,62 @@
  */
 int _printf(const char *format, ...)
 {
-	int x = 0, o_p = 0;
-	char *ptr = (char *) format, *output_p;
-	int (*ptr_func)(va_list, char *, int);
-	va_list vlist;
+	va_list mylist;
+	unsigned int i = 0, j = 0;
 
-	if (!format)
+	if (!format || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
-	va_start(vlist, format);
-	output_p = malloc(sizeof(char) * SIZE);
-	if (!output_p)
-		return (1);
-	while (format[x])
+
+	va_start(mylist, format);
+	for (i = 0; format[i] != '\0'; i++)
 	{
-		if (format[x] != '%')
-			output_p[o_p] = format[x], o_p++;
-		else if (s_trlen(ptr) != 1)
+		if (format[i] == '%')
 		{
-			ptr_func = format_type(++ptr);
-			if (!ptr_func)
-				output_p[o_p] = format[x], o_p++;
+			if (format[i + 1] == '%')
+			{	_putchar('%');
+				j++;
+				i++;
+			}
+			else if (get_op_func(format, i + 1) != NULL)
+			{	j += (get_op_func(format, i + 1))(mylist);
+				i++;
+			}
 			else
-				o_p = ptr_func(vlist, output_p, o_p), x++;
+			{	_putchar(format[i]);
+				j++;
+			}
 		}
 		else
-			o_p = -1;
-		x++, ptr++;
+		{	_putchar(format[i]);
+			j++;
+		}
 	}
-	va_end(vlist);
-	write(1, output_p, o_p);
-	free(output_p);
-	return (o_p);
+	va_end(mylist);
+	return (j);
 }
+/**
+ * get_op_func - Entry function
+ * @s: operator
+ * @pos: position
+ * Return: function
+ */
+int (*get_op_func(const char *s, int pos))(va_list)
+{
+	print_fun ops[] = {
+		{"c", print_single_char},
+		{"s", print_string_char},
+		{"d", print_decimal},
+		{"i", print_decimal},
+		{NULL, NULL}};
+	int k;
+
+	for (k = 0; ops[k].op != NULL; k++)
+	{
+		if (ops[k].op[0] == s[pos])
+		{
+			return (ops[k].f);
+		}
+	}
+	return (NULL);
+}
+
