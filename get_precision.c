@@ -40,7 +40,7 @@ int get_precision(const char *format, int *i, va_list list)
 	return (precision);
 }
 if (fmt[*ind] == fmt_types[i].fmt)
-			return (fmt_types[i].fn(list, buffer, flags, width, precision, size));
+	return (fmt_types[i].fn(list, buffer, flags, width, precision, size));
 
 	if (fmt_types[i].fmt == '\0')
 	{
